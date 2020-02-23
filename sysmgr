@@ -1,0 +1,196 @@
+#!/bin/sh -e
+
+###########################################################
+# A modular system-supervisor written in POSIX shell      #
+# written with Carbs Linux[1] in mind.                    #
+#                                                         #
+# [1]: https://carbslinux.org                             #
+#                                                         #
+# Copyright (c) 2020 - Cem Keylan                         #
+# See LICENSE for copyright information                   #
+#                                                         #
+# Please report bugs to <cem at ckyln dot com>            #
+###########################################################
+
+
+# Shellcheck gives an error telling us that 'printf ->' is
+# undefined, but since we do want to print '->' this can
+# be safely ignored.
+# shellcheck disable=SC2039
+out()   { printf '-> %s\n' "$@" ;}
+error() { printf '-> error: %s\n' "$@" ;}
+die()   { printf '-> error: %s\n' "$@" "exiting..." ; exit 1 ;}
+
+RUNDIR="${RUNDIR:-/run/sysmgr}"
+SYSDIR="${SYSDIR:-/var/sysmgr}"
+
+cleanup() {
+
+    # Clean the service run directory so that it can be
+    # restarted. Do not remove the run directory if lock
+    # file exists.
+
+    [ -e "${RUNDIR:?}/${service##*/}/lock" ] && return 0
+    rm -rf "${RUNDIR:?}/${service##*/}"
+
+}
+
+term() {
+
+    # This function is executed when the sysmgr receives an
+    # interrupt or a hangup signal. It enters the termination
+    # state where it forwards SIGTERM to every other runsyssv
+    # process that have their process ids in the RUNDIR
+
+    for process in "${RUNDIR:?}"/*/syspid ; do
+        kill -SIGTERM "$(cat "$process")" 2>/dev/null
+    done
+
+    # Wait for the redirections to happen
+    sleep 1
+
+    # Remove the RUNDIR so we can do a fresh start when we
+    # are re-initiating the program.
+    rm -rf "${RUNDIR}"
+
+    exit 0
+}
+
+redirectsignal() {
+
+    # We redirect signal that was sent to runsyssv so that
+    # those programs are stopped with the exact kill command.
+    # Adding a lock file ensures that the directory is not
+    # cleaned up.
+    sig="$1"
+
+    printf '%s\n' "${sig:-15}" > "${RUNDIR:?}/${service##*/}/lock"
+    kill "-${sig:-15}" "$svpid"
+
+}
+
+fn_sysmgr() {
+    [ "$1" ] && { 
+        printf 'Usage: %s\n\nStarts a sysmgr instance.\n' "${0##*/}" 
+        exit 0
+    }
+    
+    # Start sanity checks. We first check that we have
+    # the "$SYSDIR" variable. We then check whether the
+    # given SYSDIR exists, and has service files installed.
+    [ "$SYSDIR" ] || die "Please specify service directory"
+    [ -d "$SYSDIR" ] || die "$SYSDIR does not exist."
+    [ "$(find "$SYSDIR" -type f)" ] || die "No service file is found"
+    mkdir -p "$RUNDIR" || die
+
+    # Add pid to $RUNDIR before starting loops
+    printf '%s\n' "$$" > "$RUNDIR/pid"
+
+    # We redirect hangup and interrupt signals to the
+    # 'term' function so that we send kill signals to
+    # all sysmgr processes
+    for sig in 1 2 ; do
+        trap term "$sig"
+    done
+
+    # Lots of loops here. The first while loop is to
+    # make sure that the sysmgr does not exist. The
+    # for loop is to run every single service on the
+    # $SYSDIR. We then fork the runsyssv function to
+    # the background. This ensures that we don't have
+    # to wait until runsyssv has finished, which is a
+    # program that is not supposed to exit.
+    while sleep 1 ; do
+        for service in "$SYSDIR"/* ; do
+            [ -x "$service" ] || error "$service is not an executable file"
+            ! [ -d "$RUNDIR/${service##*/}" ] && runsyssv "$service" &
+        done
+    done
+}
+
+fn_runsyssv() {
+
+    # This is a really hacky way to handle '--help'
+    # I just do not want to add 'usage' functions nor
+    # call the same command twice. Just remove the $1
+    # if it is the typical help flag.
+    case "$1" in -h|--help|help) shift ;; esac
+    [ "$1" ] || { printf 'Usage: %s <service-file>\n\nRuns the given service script.\n' "${0##*/}" ; exit 0 ;}
+
+    # Record service name in a variable
+    service="$1"
+
+    # This is the simplest way of checking whether a
+    # service is running (or killed by the user with
+    # ctl, so that it does not run again).
+    [ -e "/run/sysmgr/${service##*/}" ] && exit 1
+
+    # Create the run directory for the service where
+    # we will be adding the pid value when we start
+    # the process.
+    mkdir -p "$RUNDIR/${service##*/}"
+    
+    # Start the service script. If the service fails
+    # exit with failure code 1. If the service exits
+    # without a failure (which it probably shouldn't)
+    # exit with code 0
+    "$service" &
+    svpid="$!"
+    printf '%s\n' "$svpid" > "$RUNDIR/${service##*/}/pid"
+    printf '%s\n' "$$" > "$RUNDIR/${service##*/}/syspid"
+    
+    for sig in 1 2 3 6 15 ; do
+        # We want to trap every signal with their own
+        # value so that we kill the service with the
+        # requested signal.
+        # shellcheck disable=SC2064
+        trap "redirectsignal $sig" $sig
+    done
+
+    # check whether services are alive
+    while kill -0 "$svpid" >/dev/null 2>&1 ; do sleep 1 ; done
+
+    # Do a cleanup when the service is killed
+    cleanup
+}
+
+fn_svctl() {
+    [ "$2" ] || {
+        printf 'usage: %s <kill|restart|stop|start> <service>\n' "${0##*/}"
+        exit 0
+    }
+    [ -d "${RUNDIR:?}/$2" ] || die "service $2 could not be found."
+    case "$1" in
+        restart)
+            fn_svctl kill "$2"
+            fn_svctl start "$2"
+            ;;
+        kill)
+            printf '9\n' > "${RUNDIR:?}/$2/lock"
+            kill -9 "$(cat "${RUNDIR:?}/$2/pid")" 2>/dev/null
+            ;;
+        stop)
+            printf '15\n' > "${RUNDIR:?}/$2/lock"
+            kill -15 "$(cat "${RUNDIR:?}/$2/pid")" 2>/dev/null
+            ;;
+        start)
+            rm -rf "${RUNDIR:?}/${2}"
+            ;;
+        *)
+            exit 1
+            ;;
+    esac
+}
+
+main() {
+    # Call the appropriate function depending on the
+    # name of the program.
+    case "${0##*/}" in
+        sysmgr) fn_sysmgr "$@" ;;
+        runsyssv) fn_runsyssv "$@" ;;
+        svctl) fn_svctl "$@" ;;
+        *) printf '%s is not a function\n' "${0##*/}" ; exit 1 ;;
+    esac
+}
+
+main "$@"

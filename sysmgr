@@ -152,6 +152,8 @@ fn_runsyssv() {
 }
 
 fn_svctl() {
+    [ -e "$RUNDIR/pid" ] || die \
+         "Could not find the pid of sysmgr" "Are you sure that it is working?"
     [ "$2" ] || {
         printf 'usage: %s <kill|restart|stop|start> <service>\n' "${0##*/}"
         exit 0

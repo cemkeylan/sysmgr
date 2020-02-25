@@ -16,13 +16,9 @@
 ###########################################################
 
 
-# Shellcheck gives an error telling us that 'printf ->' is
-# undefined, but since we do want to print '->' this can
-# be safely ignored.
-# shellcheck disable=SC2039
-out()   { printf '-> %s\n' "$@" ;}
-error() { printf '-> error: %s\n' "$@" ;}
-die()   { printf '-> error: %s\n' "$@" "exiting..." ; exit 1 ;}
+out()   { printf '%s\n' "$@" >&2 ;}
+error() { printf 'error: %s\n' "$@" >&2 ;}
+die()   { printf 'error: %s\n' "$@" "exiting..." >&2 ; exit 1 ;}
 
 RUNDIR="${RUNDIR:-/run/sysmgr}"
 SYSDIR="${SYSDIR:-/var/sysmgr}"

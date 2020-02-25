@@ -65,7 +65,7 @@ redirectsignal() {
     sig="$1"
 
     printf '%s\n' "${sig:-15}" > "${RUNDIR:?}/${service##*/}/lock"
-    kill "-${sig:-15}" "$svpid"
+    kill "-${sig:-15}" "$svpid" 2>/dev/null
 
 }
 

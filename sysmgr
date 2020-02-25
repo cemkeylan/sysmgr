@@ -80,7 +80,7 @@ fn_sysmgr() {
     # given SYSDIR exists, and has service files installed.
     [ "$SYSDIR" ] || die "Please specify service directory"
     [ -d "$SYSDIR" ] || die "$SYSDIR does not exist."
-    [ "$(find "$SYSDIR" -type f)" ] || die "No service file is found"
+    [ "$(ls -1 "$SYSDIR")" ] || die "No service file is found"
     mkdir -p "$RUNDIR" || die
 
     # Add pid to $RUNDIR before starting loops

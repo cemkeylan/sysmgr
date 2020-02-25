@@ -86,12 +86,9 @@ fn_sysmgr() {
     # Add pid to $RUNDIR before starting loops
     printf '%s\n' "$$" > "$RUNDIR/pid"
 
-    # We redirect hangup and interrupt signals to the
-    # 'term' function so that we send kill signals to
-    # all sysmgr processes
-    for sig in 1 2 ; do
-        trap term "$sig"
-    done
+    # We redirect signals to the 'term' function so that
+    # we send kill signals to all sysmgr processes.
+    trap term 1 2 3 6 15
 
     # Lots of loops here. The first while loop is to
     # make sure that the sysmgr does not exist. The

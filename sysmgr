@@ -83,7 +83,7 @@ fn_sysmgr() {
     # given SYSDIR exists, and has service files installed.
     [ "$SYSDIR" ] || die "Please specify service directory"
     [ -d "$SYSDIR" ] || die "$SYSDIR does not exist."
-    [ "$(ls -1 "$SYSDIR")" ] || die "No service file is found"
+    [ "$(ls -1 "$SYSDIR")" ] || error "No service file is found"
     mkdir -p "$RUNDIR" || die
 
     # Add pid to $RUNDIR before starting loops
@@ -101,7 +101,7 @@ fn_sysmgr() {
     # to wait until runsyssv has finished, which is a
     # program that is not supposed to exit.
     while sleep 1 ; do
-        for service in "$SYSDIR"/* ; do
+        [ "$(ls -A "$SYSDIR" )" ] && for service in "$SYSDIR"/* ; do
             [ -x "$service" ] || error "$service is not an executable file"
             ! [ -d "$RUNDIR/${service##*/}" ] && runsyssv "$service" &
         done

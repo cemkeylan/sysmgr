@@ -120,7 +120,7 @@ fn_runsyssv() {
     # This is the simplest way of checking whether a
     # service is running (or killed by the user with
     # ctl, so that it does not run again).
-    [ -e "/run/sysmgr/${service##*/}" ] && exit 1
+    [ -e "$RUNDIR/${service##*/}" ] && exit 1
 
     # Create the run directory for the service where
     # we will be adding the pid value when we start

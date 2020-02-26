@@ -2,7 +2,7 @@
 
 ###########################################################
 # A modular system-supervisor written in POSIX shell      #
-# written with Carbs Linux[1] and KISS Linux in mind.     #
+# written with Carbs Linux[1] and KISS Linux[2] in mind.  #
 #                                                         #
 # [1]: https://carbslinux.org                             #
 # [2]: https://k1ss.org                                   #

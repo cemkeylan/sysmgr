@@ -161,8 +161,8 @@ fn_runsyssv() {
 }
 
 fn_svctl() {
-    [ -e "$RUNDIR/pid" ] || die \
-         "Could not find the pid of sysmgr" "Are you sure that it is working?"
+    [ -d "$RUNDIR" ] || die \
+         "Could not find $RUNDIR (RUNDIR)" "Are you sure that sysmgr is working?"
     [ "$2" ] || {
         out "usage: ${0##*/} command service" "" "sysmgr-$version"
         exit 1

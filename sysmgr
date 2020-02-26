@@ -22,6 +22,7 @@ die()   { printf 'error: %s\n' "$@" "exiting..." >&2 ; exit 1 ;}
 
 RUNDIR="${RUNDIR:-/run/sysmgr}"
 SYSDIR="${SYSDIR:-/var/sysmgr}"
+version=0.1.0
 
 checkprocess() {
     [ -d /proc ] || {
@@ -79,7 +80,7 @@ redirectsignal() {
 
 fn_sysmgr() {
     [ "$1" ] && { 
-        printf 'Usage: %s\n\nStarts a sysmgr instance.\n' "${0##*/}" 
+        out "Usage: ${0##*/}" "" "sysmgr-$version"
         exit 0
     }
     
@@ -120,7 +121,7 @@ fn_runsyssv() {
     # call the same command twice. Just remove the $1
     # if it is the typical help flag.
     case "$1" in -h|--help|help) shift ;; esac
-    [ "$1" ] || { printf 'Usage: %s <service-file>\n\nRuns the given service script.\n' "${0##*/}" ; exit 0 ;}
+    [ "$1" ] || { out "Usage: ${0##*/} service" "" "sysmgr-$version" ; exit 1 ;}
 
     # Record service name in a variable
     service="$1"
@@ -163,8 +164,8 @@ fn_svctl() {
     [ -e "$RUNDIR/pid" ] || die \
          "Could not find the pid of sysmgr" "Are you sure that it is working?"
     [ "$2" ] || {
-        printf 'usage: %s <kill|restart|stop|start> <service>\n' "${0##*/}"
-        exit 0
+        out "usage: ${0##*/} command service" "" "sysmgr-$version"
+        exit 1
     }
     [ -d "${RUNDIR:?}/$2" ] || die "service $2 could not be found."
     case "$1" in

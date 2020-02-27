@@ -25,6 +25,18 @@ SYSDIR="${SYSDIR:-/var/sysmgr}"
 version=0.1.1
 
 checkprocess() {
+
+    # This function checks if the process is still alive and
+    # returns 0 or 1 accordingly. It checks the /proc directory
+    # first (which exists in most Linux systems, but not all)
+    # and fallbacks to kill if it doesn't. There are three
+    # reasons for preferring /proc over kill:
+    #
+    # 1: We don't need to spawn an extra process.
+    # 2: We can check processes we don't own, which eliminates
+    # the requirement of being root.
+    # 3: Checking the existence of a directory is much faster and
+    # more efficient than sending a signal to a process.
     [ -d /proc ] || {
         kill -0 "$1" || return 1
         return 0

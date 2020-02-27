@@ -52,7 +52,7 @@ term() {
     # process that have their process ids in the RUNDIR
 
     for process in "${RUNDIR:?}"/*/syspid ; do
-        kill -SIGTERM "$(cat "$process")" 2>/dev/null
+        kill -15 "$(cat "$process")" 2>/dev/null
     done
 
     # Wait for the redirections to happen

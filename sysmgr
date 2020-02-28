@@ -22,7 +22,7 @@ die()   { printf 'error: %s\n' "$@" "exiting..." >&2 ; exit 1 ;}
 
 RUNDIR="${RUNDIR:-/run/sysmgr}"
 SYSDIR="${SYSDIR:-/var/sysmgr}"
-version=0.1.1
+version=0.1.2
 
 checkprocess() {
 

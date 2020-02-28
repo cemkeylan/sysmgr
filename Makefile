@@ -14,3 +14,6 @@ install:
 uninstall:
 	rm -rf ${DESTDIR}${BINDIR}/sysmgr
 	for link in ${LINK} ; do unlink ${DESTDIR}${BINDIR}/$$link ; done
+	rm -f \
+		${DESTDIR}${MANPREFIX}/man1/svctl.1 \
+		${DESTDIR}${MANPREFIX}/man8/sysmgr.8

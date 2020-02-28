@@ -1,0 +1,19 @@
+.
+.TH "SYSMGR" "8" "February 2020" "sysmgr" "System Manager's Manual"
+.
+.SH NAME
+\fBsysmgr\fR \-\- a UNIX system-supervisor
+.
+.SH DESCRIPTION
+sysmgr is a system-supervisor written in POSIX-sh. Its' configuration
+is rather simple. It can take \fBRUNDIR\fR and \fBSYSDIR\fR as environment
+variables, which default to \fI/run/sysmgr\fR and \fI/var/sysmgr\fR
+respectively.
+.
+.SH SERVICE SCRIPTS
+sysmgr service scripts can be as simple as a one-line command. Make
+sure that the service command stays on the foreground and are not
+daemonized.
+.
+.SH AUTHOR
+Cem Keylan <cem@ckyln.com>

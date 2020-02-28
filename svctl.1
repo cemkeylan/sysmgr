@@ -1,0 +1,29 @@
+.
+.TH "SVCTL" "1" "February 2020" "Cem Keylan" "General Commands Manual"
+.
+.SH "NAME"
+\fBsvctl\fR \- sysmgr service controller
+.
+.SH "SYNOPSIS"
+svctl \fI<command>\fR \fI<service>\fR
+.
+.P
+runs the given command against the sysmgr service\.
+.
+.SH "COMMANDS"
+start/stop/restart \-\- Starts/stops/restarts a service
+.
+.P
+kill \-\- Sends a SIGKILL to the service
+.
+.P
+once \-\- Starts a service and does not restart it if it goes down\.
+.
+.P
+status \-\- Check if the service is running or not\.
+.
+.P
+up/down \-\- Same as start/stop
+.
+.SH "AUTHOR"
+Cem Keylan

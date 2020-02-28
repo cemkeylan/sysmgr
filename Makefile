@@ -1,9 +1,7 @@
 # See LICENSE for copyright information
-VERSION  = 0.01.0
-
-PREFIX   = /usr/local
-BINDIR   = ${PREFIX}/bin
-SHAREDIR = ${PREFIX}/share
+PREFIX    = /usr/local
+BINDIR    = ${PREFIX}/bin
+MANPREFIX = ${PREFIX}/share/man
 
 LINK = runsyssv svctl
 

@@ -109,7 +109,7 @@ fn_sysmgr() {
 
     # We redirect signals to the 'term' function so that
     # we send kill signals to all sysmgr processes.
-    trap term 1 2 3 6 15
+    trap term INT HUP QUIT ABRT TERM
 
     # Lots of loops here. The first while loop is to
     # make sure that the sysmgr does not exist. The
@@ -157,7 +157,7 @@ fn_runsyssv() {
     printf '%s\n' "$svpid" > "$RUNDIR/${service##*/}/pid"
     printf '%s\n' "$$" > "$RUNDIR/${service##*/}/syspid"
     
-    for sig in 1 2 3 6 15 ; do
+    for sig in INT HUP QUIT ABRT TERM ; do
         # We want to trap every signal with their own
         # value so that we kill the service with the
         # requested signal.

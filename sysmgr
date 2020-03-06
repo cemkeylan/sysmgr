@@ -24,6 +24,31 @@ RUNDIR="${RUNDIR:-/run/sysmgr}"
 SYSDIR="${SYSDIR:-/var/sysmgr}"
 version=0.1.2
 
+usage() {
+    # Define a different out function just for the usage function.
+    out() {
+        # This prints the synopsis, adds an empty line, prints arguments,
+        # adds another empty line and prints version information.
+        printf '%s\n' "Usage: ${SYNOPSIS:-${0##*/}}" "" "$@" "" "sysmgr-$version" >&2
+    }
+    case "${0##*/}" in
+        sysmgr) out \
+                    "Does not accept command line options" "" \
+                    "Can be configured from the environment variables" "RUNDIR, SYSDIR" "" \
+                    "Example: SYSDIR=\"$HOME/.service\" RUNDIR=\"$HOME/.run\" sysmgr" ;;
+        runsyssv) SYNOPSIS="runsyssv <service>" out \
+                          "Runs the given service as the parent process." \
+                          "Redirects received signals to its service." ;;
+        svctl) SYNOPSIS="svctl <command> <service>" out \
+                       "start/stop/restart  Starts/stops/restarts a service" \
+                       "kill                Sends a SIGKILL to the service" \
+                       "once                Starts a service once" \
+                       "status              Checks the service status" \
+                       "up/down             Same as start/stop" ;;
+    esac
+    exit 1
+}
+
 checkprocess() {
 
     # This function checks if the process is still alive and
@@ -91,10 +116,7 @@ redirectsignal() {
 }
 
 fn_sysmgr() {
-    [ "$1" ] && { 
-        out "Usage: ${0##*/}" "" "sysmgr-$version"
-        exit 0
-    }
+    [ "$1" ] && usage
     
     # Start sanity checks. We first check that we have
     # the "$SYSDIR" variable. We then check whether the
@@ -128,12 +150,8 @@ fn_sysmgr() {
 
 fn_runsyssv() {
 
-    # This is a really hacky way to handle '--help'
-    # I just do not want to add 'usage' functions nor
-    # call the same command twice. Just remove the $1
-    # if it is the typical help flag.
-    case "$1" in -h|--help|help) shift ;; esac
-    [ "$1" ] || { out "Usage: ${0##*/} service" "" "sysmgr-$version" ; exit 1 ;}
+    [ "$1" ] || usage
+    case "$1" in -h|--help|help) usage ;; esac
 
     # Record service name in a variable
     service="$1"
@@ -175,10 +193,7 @@ fn_runsyssv() {
 fn_svctl() {
     [ -d "$RUNDIR" ] || die \
          "Could not find $RUNDIR (RUNDIR)" "Are you sure that sysmgr is working?"
-    [ "$2" ] || {
-        out "usage: ${0##*/} command service" "" "sysmgr-$version"
-        exit 1
-    }
+    [ "$2" ] || usage
     [ -d "${RUNDIR:?}/$2" ] || die "service $2 could not be found."
     case "$1" in
         stat|status)
@@ -209,7 +224,7 @@ fn_svctl() {
             printf 'once\n' > "${RUNDIR:?}/$2/lock"
             ;;
         *)
-            exit 1
+            usage
             ;;
     esac
 }

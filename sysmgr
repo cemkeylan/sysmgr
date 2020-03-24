@@ -22,7 +22,7 @@ die()   { printf 'error: %s\n' "$@" "exiting..." >&2 ; exit 1 ;}
 
 RUNDIR="${RUNDIR:-/run/sysmgr}"
 SYSDIR="${SYSDIR:-/var/sysmgr}"
-version=0.1.2
+version=0.2.0
 
 usage() {
     # Define a different out function just for the usage function.

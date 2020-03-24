@@ -1,7 +1,7 @@
-                                ________
+				________
 
-                                 SYSMGR
-                                ________
+				 SYSMGR
+				________
 
 
 
@@ -32,6 +32,17 @@ Rationale
 [OpenRC] https://wiki.gentoo.org/wiki/Project:OpenRC
 
 [Runit] https://smarden.org/runit
+
+shinit
+~~~~~~
+
+  Yet another example that we do not need lots of complexity.  [shinit]
+  is an example init daemon in POSIX sh, yet again proving that shell is
+  sufficient for system management. `shinit' and `sysmgr' go along
+  really good.
+
+
+[shinit] https://github.com/cemkeylan/shinit
 
 
 Overview

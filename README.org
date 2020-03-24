@@ -3,6 +3,7 @@
 
 * Table of Contents                                            :TOC:noexport:
 - [[#rationale][Rationale]]
+  - [[#shinit][shinit]]
 - [[#overview][Overview]]
   - [[#usage][Usage]]
   - [[#current-functions][Current Functions]]
@@ -29,6 +30,13 @@ running some shell script should not be some complicated C
 program. It can just be managed from another shell process, a
 program that just makes use of basic UNIX utilities that exist
 on almost every system.
+
+** shinit
+
+Yet another example that we do not need lots of complexity.
+[[https://github.com/cemkeylan/shinit][shinit]] is an example init daemon in POSIX sh, yet again proving
+that shell is sufficient for system management. =shinit= and =sysmgr=
+go along really good.
 
 * Overview
 

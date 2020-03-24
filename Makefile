@@ -7,12 +7,13 @@ MANPREFIX = ${SHAREDIR}/man
 LINK = runsyssv svctl
 
 install:
-	install -Dm755 sysmgr ${DESTDIR}${BINDIR}/sysmgr
+	install -Dm755 -t ${DESTDIR}${BINDIR} sysmgr utils/sysmgr-needs
 	for link in ${LINK} ; do ln -sf sysmgr ${DESTDIR}${BINDIR}/$$link ; done
-	install -Dm644 -t ${DESTDIR}${SHAREDIR} man
+	install -Dm644 -t ${DESTDIR}${MANPREFIX}/man1 man/svctl.1
+	install -Dm644 -t ${DESTDIR}${MANPREFIX}/man8 man/sysmgr.8
 
 uninstall:
-	rm -rf ${DESTDIR}${BINDIR}/sysmgr
+	rm -f ${DESTDIR}${BINDIR}/sysmgr ${DESTDIR}${BINDIR}/sysmgr-needs
 	for link in ${LINK} ; do unlink ${DESTDIR}${BINDIR}/$$link ; done
 	rm -f \
 		${DESTDIR}${MANPREFIX}/man1/svctl.1 \

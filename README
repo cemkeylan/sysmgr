@@ -4,8 +4,7 @@
                                 ________
 
 
-A POSIX sh system-supervisor meant to take away the complexity of
-today's alternatives
+
 
 
 Rationale
@@ -103,7 +102,7 @@ SVCTL
 
 
 Switching from Runit
---------------------
+~~~~~~~~~~~~~~~~~~~~
 
   If you want to switch from runit to sysmgr all you need to do is to
   run this following command
@@ -117,3 +116,32 @@ Switching from Runit
   |     cp "$service/run" "/var/sysmgr/${service##*/}"
   | done
   `----
+
+
+Utilities
+=========
+
+  `utils' directory is for non-essential tools that can be used
+  alongside `sysmgr'.
+
+
+sysmgr-needs
+~~~~~~~~~~~~
+
+  `sysmgr-needs' waits for the given service/s to start up. It was
+  inspired by the [Life without systemd] section of the [Busybox
+  Homepage] which mentions a `/bin/need' script that waits for a
+  file/directory/socket to exist.
+
+  You can incorporate this tool in your service scripts like this
+
+  ,----
+  | #!/bin/sh
+  | sysmgr-needs dbus || exit 1
+  | exec NetworkManager -n >/dev/null 2>&1
+  `----
+
+
+[Life without systemd] https://www.busybox.net/kill_it_with_fire.txt
+
+[Busybox Homepage] https://www.busybox.net

@@ -204,7 +204,10 @@ fn_svctl() {
         getpid "$service"
         case "$job" in
             stat|status)
-                checkprocess $pid && out "$service: OK" ||
+                # Out function will not give an error, so we don't
+                # need an if statement here.
+                # shellcheck disable=2015
+                checkprocess "$pid" && out "$service: OK" ||
                         { out "$service: DOWN" ; exit 1 ;}
                 ;;
             restart)

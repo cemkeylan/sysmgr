@@ -103,6 +103,12 @@ term() {
     exit 0
 }
 
+getpid() {
+    # This is a function to retrieve the pid from the RUNDIR
+    [ -f "${RUNDIR:?}/$1/${2:-pid}" ] || die "pid file for $1 could not be found"
+    read -r pid < "${RUNDIR:?}/$1/${2:-pid}"
+}
+
 redirectsignal() {
 
     # We redirect signal that was sent to runsyssv so that
@@ -192,42 +198,37 @@ fn_runsyssv() {
 }
 
 fn_svctl() {
-    [ -d "$RUNDIR" ] || die \
-         "Could not find $RUNDIR (RUNDIR)" "Are you sure that sysmgr is working?"
-    [ "$2" ] || usage
-    [ -d "${RUNDIR:?}/$2" ] || die "service $2 could not be found."
-    case "$1" in
-        stat|status)
-            # The usage of && || is for 'if else', but since 'out' will
-            # always return 0, this usage is okay.
-            # shellcheck disable=SC2015
-            checkprocess "$(cat "${RUNDIR:?}/$2/pid")" &&
-                out "OK" || { out "DOWN" ; exit 1 ;}
-            ;;
-        restart)
-            fn_svctl kill "$2"
-            fn_svctl start "$2"
-            ;;
-        kill)
-            printf '9\n' > "${RUNDIR:?}/$2/lock"
-            kill -9 "$(cat "${RUNDIR:?}/$2/pid")" 2>/dev/null
-            ;;
-        down|stop)
-            printf '15\n' > "${RUNDIR:?}/$2/lock"
-            kill -15 "$(cat "${RUNDIR:?}/$2/pid")" 2>/dev/null
-            ;;
-        up|start)
-            rm -rf "${RUNDIR:?}/${2}"
-            ;;
-        once)
-            fn_svctl start "$2"
-            sleep 1  # Wait for the service to go up
-            printf 'once\n' > "${RUNDIR:?}/$2/lock"
-            ;;
-        *)
-            usage
-            ;;
-    esac
+    [ -d "$RUNDIR" ] || die "$RUNDIR could not be found, are you sure sysmgr is running?"
+    job="$1"; shift ; [ "$1" ] || usage
+    for service; do
+        getpid "$service"
+        case "$job" in
+            stat|status)
+                checkprocess $pid && out "$service: OK" ||
+                        { out "$service: DOWN" ; exit 1 ;}
+                ;;
+            restart)
+                fn_svctl kill "$service"
+                fn_svcrl start "$service"
+                ;;
+            kill)
+                log 9 > "${RUNDIR:?}/$service/lock"
+                kill -9 "$pid"
+                ;;
+            down|stop)
+                log 15 > "${RUNDIR:?}/$service/lock"
+                kill -15 "$pid"
+                ;;
+            up|start)
+                rm -rf "${RUNDIR:?}/$service" ;;
+            once)
+                fn_svctl start "$service"
+                sleep 1
+                log once > "${RUNDIR:?}/$service/lock"
+                ;;
+            *)  usage ;;
+        esac
+    done
 }
 
 main() {

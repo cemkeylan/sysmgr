@@ -111,7 +111,7 @@ redirectsignal() {
     # cleaned up.
     sig="$1"
 
-    printf '%s\n' "${sig:-15}" > "${RUNDIR:?}/${service##*/}/lock"
+    log "${sig:-15}" > "${RUNDIR:?}/${service##*/}/lock"
     kill "-${sig:-15}" "$svpid" 2>/dev/null
 
 }
@@ -128,7 +128,7 @@ fn_sysmgr() {
     mkdir -p "$RUNDIR" || die
 
     # Add pid to $RUNDIR before starting loops
-    printf '%s\n' "$$" > "$RUNDIR/pid"
+    log "$$" > "$RUNDIR/pid"
 
     # We redirect signals to the 'term' function so that
     # we send kill signals to all sysmgr processes.
@@ -173,8 +173,8 @@ fn_runsyssv() {
     # exit with code 0
     "$service" &
     svpid="$!"
-    printf '%s\n' "$svpid" > "$RUNDIR/${service##*/}/pid"
-    printf '%s\n' "$$" > "$RUNDIR/${service##*/}/syspid"
+    log "$svpid" > "$RUNDIR/${service##*/}/pid"
+    log "$$"     > "$RUNDIR/${service##*/}/syspid"
     
     for sig in INT HUP QUIT ABRT TERM ; do
         # We want to trap every signal with their own
@@ -237,8 +237,7 @@ main() {
         sysmgr) fn_sysmgr "$@" ;;
         runsyssv) fn_runsyssv "$@" ;;
         svctl) fn_svctl "$@" ;;
-        *) printf '%s is not a function\n' "${0##*/}" ; exit 1 ;;
-    esac
+        *) out "${0##*/} is not a function" ; exit 1 ; esac
 }
 
 main "$@"

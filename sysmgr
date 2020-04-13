@@ -17,8 +17,9 @@
 
 
 out()   { printf '%s\n' "$@" >&2 ;}
+log()   { out "$@" 2>&1 ;}
 error() { printf 'error: %s\n' "$@" >&2 ;}
-die()   { printf 'error: %s\n' "$@" "exiting..." >&2 ; exit 1 ;}
+die()   { error "$@" "exiting..." ; exit 1;}
 
 RUNDIR="${RUNDIR:-/run/sysmgr}"
 SYSDIR="${SYSDIR:-/var/sysmgr}"

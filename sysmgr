@@ -199,8 +199,12 @@ fn_runsyssv() {
 }
 
 fn_svctl() {
+    # Check if the RUNDIR exists
     [ -d "$RUNDIR" ] || die "$RUNDIR could not be found, are you sure sysmgr is running?"
-    job="$1"; shift ; [ "$1" ] || usage
+
+    # Check that there are at least two arguments,
+    # get the first argument into a job variable.
+    [ "$2" ] || usage; job="$1"; shift
     for service; do
         # This will retrieve the process id from the service directory.
         getpid "$service"

@@ -201,7 +201,9 @@ fn_svctl() {
     [ -d "$RUNDIR" ] || die "$RUNDIR could not be found, are you sure sysmgr is running?"
     job="$1"; shift ; [ "$1" ] || usage
     for service; do
+        # This will retrieve the process id from the service directory.
         getpid "$service"
+
         case "$job" in
             stat|status)
                 # Out function will not give an error, so we don't
@@ -225,6 +227,8 @@ fn_svctl() {
             up|start)
                 rm -rf "${RUNDIR:?}/$service" ;;
             once)
+                # This will place a lockfile upon start, so sysmgr
+                # will not attempt to restart it, if it goes down.
                 fn_svctl start "$service"
                 sleep 1
                 log once > "${RUNDIR:?}/$service/lock"

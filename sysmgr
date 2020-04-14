@@ -219,7 +219,7 @@ fn_svctl() {
                 ;;
             restart)
                 fn_svctl kill "$service"
-                fn_svcrl start "$service"
+                fn_svctl start "$service"
                 ;;
             kill)
                 log 9 > "${RUNDIR:?}/$service/lock"

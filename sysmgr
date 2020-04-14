@@ -207,7 +207,7 @@ fn_svctl() {
     [ "$2" ] || usage; job="$1"; shift
     for service; do
         # This will retrieve the process id from the service directory.
-        getpid "$service"
+        getpid "${service##*/}"
 
         case "$job" in
             stat|status)

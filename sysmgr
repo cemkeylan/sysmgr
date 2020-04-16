@@ -191,8 +191,8 @@ fn_runsyssv() {
         trap "redirectsignal $sig" $sig
     done
 
-    # check whether services are alive
-    while checkprocess "$svpid" ; do sleep 1 ; done
+    # Wait until service goes down
+    wait
 
     # Do a cleanup when the service is killed
     cleanup

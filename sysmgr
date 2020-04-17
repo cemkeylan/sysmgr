@@ -215,7 +215,7 @@ fn_svctl() {
                 # need an if statement here.
                 # shellcheck disable=2015
                 checkprocess "$pid" && out "$service: OK" ||
-                        { out "$service: DOWN" ; exit 1 ;}
+                        out "$service: DOWN"
                 ;;
             restart)
                 fn_svctl kill "$service"

@@ -23,7 +23,7 @@ die()   { error "$@" "exiting..." ; exit 1;}
 
 RUNDIR="${RUNDIR:-/run/sysmgr}"
 SYSDIR="${SYSDIR:-/var/sysmgr}"
-version=0.2.0
+version=0.3.0
 
 usage() {
     # Define a different out function just for the usage function.

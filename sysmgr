@@ -30,24 +30,24 @@ usage() {
     out() {
         # This prints the synopsis, adds an empty line, prints arguments,
         # adds another empty line and prints version information.
-        printf '%s\n' "Usage: ${SYNOPSIS:-${0##*/}}" "" "$@" "" "sysmgr-$version" >&2
+        SYNOPSIS="$1"; shift
+        log "Usage: $SYNOPSIS" "" "$@" "" "sysmgr-$version" >&2
     }
     case "${0##*/}" in
-        sysmgr) out \
-                    "Does not accept command line options" "" \
-                    "Can be configured from the environment variables" "RUNDIR, SYSDIR" "" \
-                    "Example: SYSDIR=\"$HOME/.service\" RUNDIR=\"$HOME/.run\" sysmgr" ;;
-        runsyssv) SYNOPSIS="runsyssv <service>" out \
-                          "Runs the given service as the parent process." \
-                          "Redirects received signals to its service." ;;
-        svctl) SYNOPSIS="svctl <command> <service>" out \
-                       "start/stop/restart  Starts/stops/restarts a service" \
-                       "kill                Sends a SIGKILL to the service" \
-                       "once                Starts a service once" \
-                       "status              Checks the service status" \
-                       "up/down             Same as start/stop" ;;
+        sysmgr)   out "sysmgr" \
+                      "Can be configured from the 'RUNDIR' and 'SYSDIR' environment variables" "" \
+                      "Example: SYSDIR=\"$HOME/.service\" RUNDIR=\"$HOME/.run\" sysmgr" ;;
+        runsyssv) out "runsyssv <service>" \
+                      "Runs the given service as the parent process." \
+                      "Redirects received signals to its service." ;;
+        svctl)    out "svctl <command> <service>" \
+                      "start/stop/restart  Starts/stops/restarts a service" \
+                      "kill                Sends a SIGKILL to the service" \
+                      "once                Starts a service once" \
+                      "status              Checks the service status" \
+                      "up/down             Same as start/stop"
     esac
-    exit 1
+    exit 0
 }
 
 checkprocess() {

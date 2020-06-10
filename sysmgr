@@ -118,8 +118,8 @@ redirectsignal() {
     # cleaned up.
     sig="$1"
 
-    log "${sig:-15}" > "${RUNDIR:?}/${service##*/}/lock"
-    kill "-${sig:-15}" "$svpid" 2>/dev/null
+    log "${sig:-TERM}" > "${RUNDIR:?}/${service##*/}/lock"
+    kill "-${sig:-TERM}" "$svpid" 2>/dev/null
 
 }
 

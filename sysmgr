@@ -16,8 +16,8 @@
 ###########################################################
 
 
-out()   { printf '%s\n' "$@" >&2 ;}
-log()   { out "$@" 2>&1 ;}
+log()   { printf '%s\n' "$@" ;}
+out()   { log "$@" >&2 ;}
 error() { printf 'error: %s\n' "$@" >&2 ;}
 die()   { error "$@" "exiting..." ; exit 1;}
 

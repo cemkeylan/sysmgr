@@ -21,8 +21,7 @@ out()   { log "$@" >&2 ;}
 error() { printf 'error: %s\n' "$@" >&2 ;}
 die()   { error "$@" "exiting..." ; exit 1;}
 
-RUNDIR="${RUNDIR:-/run/sysmgr}"
-SYSDIR="${SYSDIR:-/var/sysmgr}"
+: "${RUNDIR:=/run/sysmgr}" "${SYSDIR:=/var/sysmgr}"
 version=0.3.0
 
 usage() {
@@ -68,7 +67,6 @@ checkprocess() {
         return 0
     }
     [ -d "/proc/$1" ] || return 1
-    return 0
 }
 
 cleanup() {

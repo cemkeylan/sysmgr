@@ -3,18 +3,36 @@ PREFIX    = /usr/local
 BINDIR    = ${PREFIX}/bin
 SHAREDIR  = ${PREFIX}/share
 MANPREFIX = ${SHAREDIR}/man
+MAN1      = ${MANPREFIX}/man1
+MAN8      = ${MANPREFIX}/man8
 
 LINK = runsyssv svctl
 
-install:
-	install -Dm755 -t ${DESTDIR}${BINDIR} sysmgr utils/sysmgr-needs
+all: utils
+
+utils:
+	${MAKE} -C utils
+
+install: all
+	mkdir -p ${DESTDIR}${BINDIR} ${DESTDIR}${MAN1} ${DESTDIR}${MAN8}
+	cp sysmgr utils/sysmgr-need ${DESTDIR}${BINDIR}
+	chmod 755 ${DESTDIR}${BINDIR}/sysmgr
+	chmod 755 ${DESTDIR}${BINDIR}/sysmgr-needs
 	for link in ${LINK} ; do ln -sf sysmgr ${DESTDIR}${BINDIR}/$$link ; done
-	install -Dm644 -t ${DESTDIR}${MANPREFIX}/man1 man/svctl.1
-	install -Dm644 -t ${DESTDIR}${MANPREFIX}/man8 man/sysmgr.8
+	cp man/svctl.1  ${DESTDIR}${MAN1}
+	cp man/sysmgr.8 ${DESTDIR}${MAN8}
+	chmod 644 ${DESTDIR}${MAN1}/svctl.1
+	chmod 644 ${DESTDIR}${MAN8}/sysmgr.8
 
 uninstall:
-	rm -f ${DESTDIR}${BINDIR}/sysmgr ${DESTDIR}${BINDIR}/sysmgr-needs
-	for link in ${LINK} ; do unlink ${DESTDIR}${BINDIR}/$$link ; done
-	rm -f \
-		${DESTDIR}${MANPREFIX}/man1/svctl.1 \
+	rm -f ${DESTDIR}${BINDIR}/sysmgr \
+		${DESTDIR}${BINDIR}/sysmgr-needs \
+		${DESTDIR}${BINDIR}/svctl \
+		${DESTDIR}${BINDIR}/runsyssv
+	rm -f ${DESTDIR}${MANPREFIX}/man1/svctl.1 \
 		${DESTDIR}${MANPREFIX}/man8/sysmgr.8
+
+clean:
+	${MAKE} -C utils clean
+
+.PHONY: all utils install uninstall clean

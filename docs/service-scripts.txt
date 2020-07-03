@@ -1,0 +1,53 @@
+Creating Service Scripts
+--------------------------------------------------------------------------------
+
+Service scripts can be anything from C binaries to shell scripts. All they need
+is to be executable. However, given the simplicity of the services, most of them
+are better written in POSIX sh. A simple service could be as following:
+
+  +--------------------------------------------------------------------------+
+  | /etc/sysmgr/acpid                                                        |
+  +--------------------------------------------------------------------------+
+  |                                                                          |
+  | #!/bin/sh                                                                |
+  | exec acpid -f                                                            |
+  |                                                                          |
+  +--------------------------------------------------------------------------+
+
+If you are familiar with acpid, you may have noticed the '-f' flag, which makes
+sure that the program is daemonized, and the program stays in the foreground.
+This is important, because sysmgr expects that the program doesn't fork itself
+to the background. That's how we are tracking its process id. Usually service
+programs such as SSHD, NTPD, DHCPCD, etc. have a flag for staying in the
+foreground, and the service script must make use of such flags.
+
+Another thing you may have noticed is the 'exec' part of the service. In shell,
+'exec' makes the shell exit and run the given program with its own process id.
+This is also necessary to track the correct process.
+
+
+Service dependencies
+--------------------------------------------------------------------------------
+
+Some services may depend on other services in order to start working. An example
+for this is NetworkManager which depends on dbus in order to launch. sysmgr
+comes with a utility named sysmgr-needs which can be used to manage service
+dependencies. Here are example service scripts for NetworkManager and dbus.
+
+  +--------------------------------------------------------------------------+
+  | /etc/sysmgr/dbus                                                         |
+  +--------------------------------------------------------------------------+
+  |                                                                          |
+  | #!/bin/sh                                                                |
+  | mkdir -p /run/dbus                                                       |
+  | exec dbus-daemon --system --nofork --nopidfile                           |
+  |                                                                          |
+  +--------------------------------------------------------------------------+
+  | /etc/sysmgr/NetworkManager                                               |
+  +--------------------------------------------------------------------------+
+  |                                                                          |
+  | #!/bin/sh                                                                |
+  | sysmgr-needs dbus                                                        |
+  | exec NetworkManager -n                                                   |
+  |                                                                          |
+  +--------------------------------------------------------------------------+

@@ -176,7 +176,7 @@ fn_runsyssv() {
         trap "redirectsignal $sig" $sig
     done
 
-    # Wait until service goes down
+    # Wait until service goes down.
     wait
 
     # Do a cleanup when the service is killed.

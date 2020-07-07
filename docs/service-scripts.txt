@@ -1,4 +1,13 @@
-Creating Service Scripts
+SERVICE SCRIPTS
+--------------------------------------------------------------------------------
+
+TABLE OF CONTENTS
+- Creating service scripts                                                 [1.0]
+    - Service dependencies                                                 [1.1]
+    - Running commands after service stop                                  [1.2]
+
+
+[1.0] Creating service scripts
 --------------------------------------------------------------------------------
 
 Service scripts can be anything from C binaries to shell scripts. All they need
@@ -26,7 +35,7 @@ Another thing you may have noticed is the 'exec' part of the service. In shell,
 This is also necessary to track the correct process.
 
 
-Service dependencies
+[1.1] Service dependencies
 --------------------------------------------------------------------------------
 
 Some services may depend on other services in order to start working. An example
@@ -47,7 +56,32 @@ dependencies. Here are example service scripts for NetworkManager and dbus.
   +--------------------------------------------------------------------------+
   |                                                                          |
   | #!/bin/sh                                                                |
-  | sysmgr-needs dbus                                                        |
+  | sysmgr-needs dbus || exit 1                                              |
   | exec NetworkManager -n                                                   |
   |                                                                          |
   +--------------------------------------------------------------------------+
+
+
+[1.2] Running commands after service stop
+--------------------------------------------------------------------------------
+
+sysmgr doesn't come with a way to handling service stops. Runit has the 'stop'
+script and systemd comes with a 'ExecStop' command. This can be easily handled
+within the service script itself.
+
+  +--------------------------------------------------------------------------+
+  | /etc/sysmgr/agetty-1                                                     |
+  +--------------------------------------------------------------------------+
+  |                                                                          |
+  | #!/bin/sh                                                                |
+  | setsid agetty tty1 38400 linux &                                         |
+  |                                                                          |
+  | # Get the process id and replace the stored process id with agetty's     |
+  | printf '%s\n' "$!" > /run/sysmgr/agetty-1/pid                            |
+  | wait                                                                     |
+  |                                                                          |
+  | # Wait until agetty dies and continue the script                         |
+  | utmpset -w tty1                                                          |
+  |                                                                          |
+  +--------------------------------------------------------------------------+
+  

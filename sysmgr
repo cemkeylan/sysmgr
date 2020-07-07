@@ -189,8 +189,17 @@ fn_svctl() {
     # job variable.
     [ "$2" ] || usage; job="$1"; shift
     for service; do
+
+        # We get the basename of the service, so that it allows a user to do
+        # operations such as
+        #
+        #     'svctl status /var/sysmgr/*'
+        #
+        # and get a status list of all available services.
+        service=${service##*/}
+
         # This will retrieve the process id from the service directory.
-        getpid "${service##*/}"
+        getpid "$service"
 
         case "$job" in
             stat|status)

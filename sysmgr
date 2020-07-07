@@ -197,9 +197,11 @@ fn_svctl() {
 
         case "$job" in
             stat|status)
-                # shellcheck disable=2015
-                checkprocess "$pid" && out "$service: OK" ||
-                        out "$service: DOWN"
+                if checkprocess "$pid"; then
+                    out "$service: OK"
+                else
+                    out "$service: DOWN"
+                fi
                 ;;
             restart)
                 fn_svctl kill "$service"

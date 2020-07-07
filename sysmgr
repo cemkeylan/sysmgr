@@ -32,7 +32,7 @@ usage() {
         log "Usage: $SYNOPSIS" "" "$@" "" "sysmgr-$version" >&2
     }
     case "${0##*/}" in
-        sysmgr)   out "sysmgr" "See sysmgr(8) for usage information." ;;
+        sysmgr)   out "sysmgr" "See sysmgr(8) for detailed information." ;;
         runsyssv) out "runsyssv [service]" ;;
         svctl)    out "svctl [command] [service...]" \
                       "start/stop/restart  Start/stop/restart services" \

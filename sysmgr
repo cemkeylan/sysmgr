@@ -47,17 +47,16 @@ usage() {
 
 checkprocess() {
 
-    # This function checks if the process is still alive and
-    # returns 0 or 1 accordingly. It checks the /proc directory
-    # first (which exists in most Linux systems, but not all)
-    # and fallbacks to kill if it doesn't. There are three
-    # reasons for preferring /proc over kill:
+    # This function checks if the process is still alive and returns 0 or 1
+    # accordingly. It checks the /proc directory first (which exists in most
+    # Linux systems, but not all) and fallbacks to kill if it doesn't. There are
+    # three reasons for preferring /proc over kill:
     #
     # 1: We don't need to spawn an extra process.
-    # 2: We can check processes we don't own, which eliminates
-    # the requirement of being root.
-    # 3: Checking the existence of a directory is much faster and
-    # more efficient than sending a signal to a process.
+    # 2: We can check processes we don't own, which eliminates the requirement
+    #    of being root.
+    # 3: Checking the existence of a directory is much faster and more efficient
+    #    than sending a signal to a process.
     [ -d /proc ] || {
         kill -0 "$1" || return 1
         return 0
@@ -67,9 +66,8 @@ checkprocess() {
 
 cleanup() {
 
-    # Clean the service run directory so that it can be
-    # restarted. Do not remove the run directory if lock
-    # file exists.
+    # Clean the service run directory so that it can be restarted. Do not remove
+    # the run directory if lock file exists.
 
     [ -e "${RUNDIR:?}/${service##*/}/lock" ] && return 0
     rm -rf "${RUNDIR:?}/${service##*/}"
@@ -78,10 +76,9 @@ cleanup() {
 
 term() {
 
-    # This function is executed when the sysmgr receives an
-    # interrupt or a hangup signal. It enters the termination
-    # state where it forwards SIGTERM to every other runsyssv
-    # process that have their process ids in the RUNDIR
+    # This function is executed when the sysmgr receives an interrupt or a
+    # hangup signal. It enters the termination state where it forwards SIGTERM
+    # to every other runsyssv process that have their process ids in the RUNDIR.
 
     for process in "${RUNDIR:?}"/*/syspid ; do
         kill -15 "$(cat "$process")" 2>/dev/null
@@ -90,15 +87,17 @@ term() {
     # Wait for the redirections to happen
     sleep 1
 
-    # Remove the RUNDIR so we can do a fresh start when we
-    # are re-initiating the program.
+    # Remove the RUNDIR so we can do a fresh start when we are re-initiating the
+    # program.
     rm -rf "${RUNDIR}"
 
     exit 0
 }
 
 getpid() {
+
     # This is a function to retrieve the pid from the RUNDIR
+
     [ -f "${RUNDIR:?}/$1/${2:-pid}" ] ||
         { error "pid file for $1 could not be found" ; return 1 ;}
     read -r pid < "${RUNDIR:?}/$1/${2:-pid}"
@@ -106,10 +105,9 @@ getpid() {
 
 redirectsignal() {
 
-    # We redirect signal that was sent to runsyssv so that
-    # those programs are stopped with the exact kill command.
-    # Adding a lock file ensures that the directory is not
-    # cleaned up.
+    # We redirect signal that was sent to runsyssv so that those programs are
+    # stopped with the exact kill command. Adding a lock file ensures that the
+    # directory is not cleaned up.
     sig="$1"
 
     log "${sig:-TERM}" > "${RUNDIR:?}/${service##*/}/lock"
@@ -120,9 +118,9 @@ redirectsignal() {
 fn_sysmgr() {
     [ "$1" ] && usage
     
-    # Start sanity checks. We first check that we have
-    # the "$SYSDIR" variable. We then check whether the
-    # given SYSDIR exists, and has service files installed.
+    # Start sanity checks. We first check that we have the "$SYSDIR" variable.
+    # We then check whether the given SYSDIR exists, and has service files
+    # installed.
     [ "$SYSDIR" ] || die "Please specify service directory"
     [ -d "$SYSDIR" ] || die "$SYSDIR does not exist."
     [ "$(ls -1 "$SYSDIR")" ] || error "No service file is found"
@@ -131,21 +129,19 @@ fn_sysmgr() {
     # Add pid to $RUNDIR before starting loops
     log "$$" > "$RUNDIR/pid"
 
-    # We redirect signals to the 'term' function so that
-    # we send kill signals to all sysmgr processes.
+    # We redirect signals to the 'term' function so that we send kill signals to
+    # all sysmgr processes.
     trap term INT HUP QUIT ABRT TERM
 
-    # Lots of loops here. The first while loop is to
-    # make sure that the sysmgr does not exist. The
-    # for loop is to run every single service on the
-    # $SYSDIR. We then fork the runsyssv function to
-    # the background. This ensures that we don't have
-    # to wait until runsyssv has finished, which is a
+    # Lots of loops here. The first while loop is to make sure that the sysmgr
+    # does not exist. The for loop is to run every single service on the
+    # $SYSDIR. We then fork the runsyssv function to the background. This
+    # ensures that we don't have to wait until runsyssv has finished, which is a
     # program that is not supposed to exit.
     while sleep 1 ; do
         [ "$(ls -A "$SYSDIR" )" ] && for service in "$SYSDIR"/* ; do
             [ -x "$service" ] || error "$service is not an executable file"
-            ! [ -d "$RUNDIR/${service##*/}" ] && runsyssv "$service" &
+            ! [ -d "$RUNDIR/${service##*/}" ] && fn_runsyssv "$service" &
         done
     done
 }
@@ -158,29 +154,25 @@ fn_runsyssv() {
     # Record service name in a variable
     service="$1"
 
-    # This is the simplest way of checking whether a
-    # service is running (or killed by the user with
-    # ctl, so that it does not run again).
+    # This is the simplest way of checking whether a service is running (or
+    # killed by the user with ctl, so that it does not run again).
     [ -e "$RUNDIR/${service##*/}" ] && exit 1
 
-    # Create the run directory for the service where
-    # we will be adding the pid value when we start
-    # the process.
+    # Create the run directory for the service where we will be adding the pid
+    # value when we start the process.
     mkdir -p "$RUNDIR/${service##*/}"
     
-    # Start the service script. If the service fails
-    # exit with failure code 1. If the service exits
-    # without a failure (which it probably shouldn't)
-    # exit with code 0
+    # Start the service script. If the service fails exit with failure code 1.
+    # If the service exits without a failure (which it probably shouldn't) exit
+    # with code 0.
     "$service" &
     svpid="$!"
     log "$svpid" > "$RUNDIR/${service##*/}/pid"
     log "$$"     > "$RUNDIR/${service##*/}/syspid"
     
     for sig in INT HUP QUIT ABRT TERM ; do
-        # We want to trap every signal with their own
-        # value so that we kill the service with the
-        # requested signal.
+        # We want to trap every signal with their own value so that we kill the
+        # service with the requested signal.
         # shellcheck disable=SC2064
         trap "redirectsignal $sig" $sig
     done
@@ -188,7 +180,7 @@ fn_runsyssv() {
     # Wait until service goes down
     wait
 
-    # Do a cleanup when the service is killed
+    # Do a cleanup when the service is killed.
     cleanup
 }
 
@@ -196,8 +188,8 @@ fn_svctl() {
     # Check if the RUNDIR exists
     [ -d "$RUNDIR" ] || die "$RUNDIR could not be found, are you sure sysmgr is running?"
 
-    # Check that there are at least two arguments,
-    # get the first argument into a job variable.
+    # Check that there are at least two arguments, get the first argument into a
+    # job variable.
     [ "$2" ] || usage; job="$1"; shift
     for service; do
         # This will retrieve the process id from the service directory.
@@ -205,8 +197,6 @@ fn_svctl() {
 
         case "$job" in
             stat|status)
-                # Out function will not give an error, so we don't
-                # need an if statement here.
                 # shellcheck disable=2015
                 checkprocess "$pid" && out "$service: OK" ||
                         out "$service: DOWN"
@@ -226,8 +216,8 @@ fn_svctl() {
             up|start)
                 rm -rf "${RUNDIR:?}/$service" ;;
             once)
-                # This will place a lockfile upon start, so sysmgr
-                # will not attempt to restart it, if it goes down.
+                # This will place a lockfile upon start, so sysmgr will not
+                # attempt to restart it, if it goes down.
                 fn_svctl start "$service"
                 sleep 1
                 log once > "${RUNDIR:?}/$service/lock"
@@ -238,8 +228,7 @@ fn_svctl() {
 }
 
 main() {
-    # Call the appropriate function depending on the
-    # name of the program.
+    # Call the appropriate function depending on the name of the program.
     case "${0##*/}" in
         sysmgr) fn_sysmgr "$@" ;;
         runsyssv) fn_runsyssv "$@" ;;

@@ -15,7 +15,7 @@ utils:
 
 install: all
 	mkdir -p ${DESTDIR}${BINDIR} ${DESTDIR}${MAN1} ${DESTDIR}${MAN8}
-	cp sysmgr utils/sysmgr-need ${DESTDIR}${BINDIR}
+	cp sysmgr utils/sysmgr-needs ${DESTDIR}${BINDIR}
 	chmod 755 ${DESTDIR}${BINDIR}/sysmgr
 	chmod 755 ${DESTDIR}${BINDIR}/sysmgr-needs
 	for link in ${LINK} ; do ln -sf sysmgr ${DESTDIR}${BINDIR}/$$link ; done

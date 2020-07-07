@@ -56,11 +56,9 @@ checkprocess() {
     #    of being root.
     # 3: Checking the existence of a directory is much faster and more efficient
     #    than sending a signal to a process.
-    [ -d /proc ] || {
-        kill -0 "$1" || return 1
-        return 0
-    }
-    [ -d "/proc/$1" ] || return 1
+    #
+    # However, this isn't the portable way, that's why we fallback to kill(1).
+    [ -d "/proc/$1" ] || kill -0 "$1"
 }
 
 cleanup() {

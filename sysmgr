@@ -33,17 +33,13 @@ usage() {
         log "Usage: $SYNOPSIS" "" "$@" "" "sysmgr-$version" >&2
     }
     case "${0##*/}" in
-        sysmgr)   out "sysmgr" \
-                      "Can be configured from the 'RUNDIR' and 'SYSDIR' environment variables" "" \
-                      "Example: SYSDIR=\"$HOME/.service\" RUNDIR=\"$HOME/.run\" sysmgr" ;;
-        runsyssv) out "runsyssv <service>" \
-                      "Runs the given service as the parent process." \
-                      "Redirects received signals to its service." ;;
-        svctl)    out "svctl <command> <service>" \
-                      "start/stop/restart  Starts/stops/restarts a service" \
-                      "kill                Sends a SIGKILL to the service" \
-                      "once                Starts a service once" \
-                      "status              Checks the service status" \
+        sysmgr)   out "sysmgr" "See sysmgr(8) for usage information." ;;
+        runsyssv) out "runsyssv [service]" ;;
+        svctl)    out "svctl [command] [service...]" \
+                      "start/stop/restart  Start/stop/restart services" \
+                      "kill                Send a SIGKILL to services" \
+                      "once                Start services once" \
+                      "status              Check service statuses" \
                       "up/down             Same as start/stop"
     esac
     exit 0

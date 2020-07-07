@@ -1,19 +1,18 @@
 #!/bin/sh -e
 
-###########################################################
-# A modular system-supervisor written in POSIX shell      #
-# written with Carbs Linux[1] and KISS Linux[2] in mind.  #
-#                                                         #
-# [1]: https://carbslinux.org                             #
-# [2]: https://k1ss.org                                   #
-#                                                         #
-# Copyright (c) 2020 - Cem Keylan                         #
-# Distributed under the terms of GNU GPLv3                #
-#                                                         #
-# Please report bugs to <cem at ckyln dot com>            #
-# or open an issue at                                     #
-# https://github.com/cemkeylan/sysmgr                     #
-###########################################################
+################################################################################
+# A modular system-supervisor written in POSIX shell written with              #
+# Carbs Linux[1] and KISS Linux[2] in mind.                                    #
+#                                                                              #
+# [1]: https://carbslinux.org                                                  #
+# [2]: https://k1ss.org                                                        #
+#                                                                              #
+# Copyright (c) 2020 - Cem Keylan                                              #
+# Distributed under the terms of GNU GPLv3                                     #
+#                                                                              #
+# Please report bugs to <cem at ckyln dot com> or open an issue at             #
+# https://github.com/cemkeylan/sysmgr                                          #
+################################################################################
 
 
 log()   { printf '%s\n' "$@" ;}

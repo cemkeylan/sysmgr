@@ -11,7 +11,7 @@ LINK = runsyssv svctl
 all: utils
 
 utils:
-	${MAKE} -C utils
+	@${MAKE} -C utils
 
 install: all
 	mkdir -p ${DESTDIR}${BINDIR} ${DESTDIR}${MAN1} ${DESTDIR}${MAN8}
@@ -33,6 +33,6 @@ uninstall:
 		${DESTDIR}${MANPREFIX}/man8/sysmgr.8
 
 clean:
-	${MAKE} -C utils clean
+	@${MAKE} -C utils clean
 
 .PHONY: all utils install uninstall clean

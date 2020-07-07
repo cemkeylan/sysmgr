@@ -66,7 +66,9 @@ cleanup() {
     # Clean the service run directory so that it can be restarted. Do not remove
     # the run directory if lock file exists.
 
-    [ -e "${RUNDIR:?}/${service##*/}/lock" ] && return 0
+    rm -f "${RUNDIR}/${service##*/}/pid" "${RUNDIR}/${service##*/}/syspid"
+
+    [ -e "${RUNDIR:?}/${service##*/}/lock" ] && return
     rm -rf "${RUNDIR:?}/${service##*/}"
 
 }

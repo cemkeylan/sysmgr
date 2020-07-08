@@ -140,7 +140,7 @@ fn_sysmgr() {
     while sleep 1 ; do
         [ "$(ls -A "$SYSDIR" )" ] && for service in "$SYSDIR"/* ; do
             [ -x "$service" ] || error "$service is not an executable file"
-            ! [ -d "$RUNDIR/${service##*/}" ] && fn_runsyssv "$service" &
+            ! [ -d "$RUNDIR/${service##*/}" ] && runsyssv "$service" &
         done
     done
 }

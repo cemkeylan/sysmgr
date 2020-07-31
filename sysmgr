@@ -20,9 +20,6 @@ out()   { log "$@" >&2 ;}
 error() { printf 'error: %s\n' "$@" >&2 ;}
 die()   { error "$@" "exiting..." ; exit 1;}
 
-: "${RUNDIR:=/run/sysmgr}" "${SYSDIR:=/var/sysmgr}"
-version=0.3.0
-
 usage() {
     # Define a different out function just for the usage function.
     out() {
@@ -239,6 +236,9 @@ fn_svctl() {
 }
 
 main() {
+    RUNDIR=${RUNDIR:-/run/sysmgr} SYSDIR=${SYSDIR:-/var/sysmgr}
+    version=0.3.0
+
     # Call the appropriate function depending on the name of the program.
     case "${0##*/}" in
         sysmgr) fn_sysmgr "$@" ;;

@@ -241,10 +241,8 @@ main() {
 
     # Call the appropriate function depending on the name of the program.
     case "${0##*/}" in
-        sysmgr) fn_sysmgr "$@" ;;
-        runsyssv) fn_runsyssv "$@" ;;
-        svctl) fn_svctl "$@" ;;
-        *) out "${0##*/} is not a function" ; exit 1 ; esac
+        sysmgr|runsyssv|svctl) "fn_${0##*/}" "$@" ;;
+        *) out "${0##*/} is not a sysmgr function" ; exit 1 ; esac
 }
 
 main "$@"

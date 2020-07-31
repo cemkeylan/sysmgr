@@ -114,7 +114,7 @@ redirectsignal() {
 
 fn_sysmgr() {
     [ "$1" ] && usage
-    
+
     # Start sanity checks. We first check that we have the "$SYSDIR" variable.
     # We then check whether the given SYSDIR exists, and has service files
     # installed.
@@ -158,7 +158,7 @@ fn_runsyssv() {
     # Create the run directory for the service where we will be adding the pid
     # value when we start the process.
     mkdir -p "$RUNDIR/${service##*/}"
-    
+
     # Start the service script. If the service fails exit with failure code 1.
     # If the service exits without a failure (which it probably shouldn't) exit
     # with code 0.
@@ -166,7 +166,7 @@ fn_runsyssv() {
     svpid="$!"
     log "$svpid" > "$RUNDIR/${service##*/}/pid"
     log "$$"     > "$RUNDIR/${service##*/}/syspid"
-    
+
     for sig in INT HUP QUIT ABRT TERM ; do
         # We want to trap every signal with their own value so that we kill the
         # service with the requested signal.

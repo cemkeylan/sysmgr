@@ -79,8 +79,9 @@ term() {
     # hangup signal. It enters the termination state where it forwards SIGTERM
     # to every other runsyssv process that have their process ids in the RUNDIR.
 
-    for process in "${RUNDIR:?}"/*/syspid ; do
-        kill -15 "$(cat "$process")" 2>/dev/null
+    for process in "$RUNDIR"/*/syspid ; do
+        read -r pid < "$process"
+        kill -15 "$pid" 2>/dev/null
     done
 
     # Wait for the redirections to happen

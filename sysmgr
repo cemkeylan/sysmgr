@@ -63,9 +63,9 @@ cleanup() {
     # Clean the service run directory so that it can be restarted. Do not remove
     # the run directory if lock file exists.
 
-    rm -f "${RUNDIR}/${service##*/}/pid" "${RUNDIR}/${service##*/}/syspid"
+    rm -f "$RUNDIR/${service##*/}/pid" "${RUNDIR}/${service##*/}/syspid"
 
-    [ -e "${RUNDIR:?}/${service##*/}/lock" ] && return
+    [ -e "$RUNDIR/${service##*/}/lock" ] && return
     rm -rf "${RUNDIR:?}/${service##*/}"
 
 }
@@ -95,9 +95,9 @@ getpid() {
 
     # This is a function to retrieve the pid from the RUNDIR
 
-    [ -f "${RUNDIR:?}/$1/${2:-pid}" ] ||
+    [ -f "$RUNDIR/$1/${2:-pid}" ] ||
         { error "pid file for $1 could not be found" ; return 1 ;}
-    read -r pid < "${RUNDIR:?}/$1/${2:-pid}"
+    read -r pid < "$RUNDIR/$1/${2:-pid}"
 }
 
 redirectsignal() {
@@ -214,11 +214,11 @@ fn_svctl() {
                 fn_svctl start "$service"
                 ;;
             kill)
-                log 9 > "${RUNDIR:?}/$service/lock"
+                log 9 > "$RUNDIR/$service/lock"
                 kill -9 "$pid"
                 ;;
             down|stop)
-                log 15 > "${RUNDIR:?}/$service/lock"
+                log 15 > "$RUNDIR/$service/lock"
                 kill -15 "$pid"
                 ;;
             up|start)
@@ -228,7 +228,7 @@ fn_svctl() {
                 # attempt to restart it, if it goes down.
                 fn_svctl start "$service"
                 sleep 1
-                log once > "${RUNDIR:?}/$service/lock"
+                log once > "$RUNDIR/$service/lock"
                 ;;
             *)  usage ;;
         esac

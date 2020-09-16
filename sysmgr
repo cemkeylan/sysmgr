@@ -66,10 +66,10 @@ cleanup() {
     # Clean the service run directory so that it can be restarted. Do not remove
     # the run directory if lock file exists.
 
-    rm -f "$RUNDIR/${service##*/}/pid" "${RUNDIR}/${service##*/}/syspid"
+    rm -f -- "$RUNDIR/${service##*/}/pid" "${RUNDIR}/${service##*/}/syspid"
 
     [ -e "$RUNDIR/${service##*/}/lock" ] && return
-    rm -rf "${RUNDIR:?}/${service##*/}"
+    rm -rf -- "${RUNDIR:?}/${service##*/}"
 
 }
 
@@ -89,7 +89,7 @@ term() {
 
     # Remove the RUNDIR so we can do a fresh start when we are re-initiating the
     # program.
-    rm -rf "${RUNDIR}"
+    rm -rf -- "${RUNDIR}"
 
     exit 0
 }
@@ -225,7 +225,7 @@ fn_svctl() {
                 kill -15 "$pid"
                 ;;
             up|start)
-                checkprocess "$pid" || rm -rf "${RUNDIR:?}/$service" ;;
+                checkprocess "$pid" || rm -rf -- "${RUNDIR:?}/$service" ;;
             once)
                 # This will place a lockfile upon start, so sysmgr will not
                 # attempt to restart it, if it goes down.

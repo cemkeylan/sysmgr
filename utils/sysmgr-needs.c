@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <libgen.h>
 
 #include "util.h"
 
@@ -11,7 +12,7 @@ int
 main(int argc, char *argv[])
 {
 	if (argc < 2) {
-		printf("usage: %s [service...]\n", argv[0]);
+		printf("usage: %s [service...]\n", basename(argv[0]));
 		return 1;
 	}
 

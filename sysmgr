@@ -92,8 +92,8 @@ term() {
 }
 
 getpid() {
-
     # This is a function to retrieve the pid from the RUNDIR
+    unset pid
 
     [ -f "$RUNDIR/$1/${2:-pid}" ] ||
         { error "pid file for $1 could not be found" ; return 1 ;}

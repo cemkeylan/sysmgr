@@ -225,7 +225,7 @@ fn_svctl() {
                 kill -15 "$pid"
                 ;;
             up|start)
-                rm -rf "${RUNDIR:?}/$service" ;;
+                checkprocess "$pid" || rm -rf "${RUNDIR:?}/$service" ;;
             once)
                 # This will place a lockfile upon start, so sysmgr will not
                 # attempt to restart it, if it goes down.

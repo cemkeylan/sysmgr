@@ -1,2 +1,3 @@
 *.o
 sysmgr-needs
+checkprocess

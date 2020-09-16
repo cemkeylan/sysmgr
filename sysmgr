@@ -42,6 +42,9 @@ usage() {
 }
 
 checkprocess() {
+    # If no arguments are given, do not continue.
+    # This may happen when getpid returns empty.
+    [ "$1" ] || return 1
 
     # This function checks if the process is still alive and returns 0 or 1
     # accordingly. It checks the /proc directory first (which exists in most

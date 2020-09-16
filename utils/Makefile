@@ -1,9 +1,9 @@
 CC  = cc
 
 HDR = util.h
-SRC = util.c sysmgr-needs.c
+SRC = util.c sysmgr-needs.c checkprocess.c
 OBJ = ${SRC:.c=.o}
-BIN = sysmgr-needs
+BIN = sysmgr-needs checkprocess
 
 all: ${BIN}
 

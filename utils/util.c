@@ -59,7 +59,12 @@ checkprocess(int pid)
 	else {
 		switch (errno) {
 		case 1:
-			die("kill:");
+			/* EPERM is only produced if the process exists, but the
+			 * user running the program doesn't have the permissions
+			 * to kill the process. We can safely assume that the
+			 * process exists in this case and return 0.
+			 */
+			return 0;
 			break;
 		default:
 			perror("kill");

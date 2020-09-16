@@ -15,9 +15,10 @@ utils:
 
 install: all
 	mkdir -p ${DESTDIR}${BINDIR} ${DESTDIR}${MAN1} ${DESTDIR}${MAN8}
-	cp sysmgr utils/sysmgr-needs ${DESTDIR}${BINDIR}
+	cp sysmgr utils/sysmgr-needs utils/checkprocess ${DESTDIR}${BINDIR}
 	chmod 755 ${DESTDIR}${BINDIR}/sysmgr
 	chmod 755 ${DESTDIR}${BINDIR}/sysmgr-needs
+	chmod 755 ${DESTDIR}${BINDIR}/checkprocess
 	for link in ${LINK} ; do ln -sf sysmgr ${DESTDIR}${BINDIR}/$$link ; done
 	cp man/svctl.1  ${DESTDIR}${MAN1}
 	cp man/sysmgr.8 ${DESTDIR}${MAN8}
@@ -27,6 +28,7 @@ install: all
 uninstall:
 	rm -f ${DESTDIR}${BINDIR}/sysmgr \
 		${DESTDIR}${BINDIR}/sysmgr-needs \
+		${DESTDIR}${BINDIR}/checkprocess \
 		${DESTDIR}${BINDIR}/svctl \
 		${DESTDIR}${BINDIR}/runsyssv
 	rm -f ${DESTDIR}${MANPREFIX}/man1/svctl.1 \

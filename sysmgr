@@ -220,8 +220,8 @@ fn_svctl() {
                 kill -USR1 "$pid"
                 ;;
             down|stop)
-                log 15 > "$RUNDIR/$service/lock"
-                kill -15 "$pid"
+                log TERM > "$RUNDIR/$service/lock"
+                kill -TERM "$pid"
                 ;;
             up|start)
                 checkprocess "$pid" || rm -rf -- "${RUNDIR:?}/$service" ;;

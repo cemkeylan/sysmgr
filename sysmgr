@@ -174,6 +174,8 @@ fn_runsyssv() {
         trap "redirectsignal $sig" $sig
     done
 
+    trap "redirectsignal KILL" USR1
+
     # Wait until service goes down.
     wait
 
@@ -214,8 +216,8 @@ fn_svctl() {
                 fn_svctl start "$service"
                 ;;
             kill)
-                log 9 > "$RUNDIR/$service/lock"
-                kill -9 "$pid"
+                log KILL > "$RUNDIR/$service/lock"
+                kill -USR1 "$pid"
                 ;;
             down|stop)
                 log 15 > "$RUNDIR/$service/lock"

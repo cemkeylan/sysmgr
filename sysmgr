@@ -62,10 +62,8 @@ checkprocess() {
 }
 
 cleanup() {
-
     # Clean the service run directory so that it can be restarted. Do not remove
     # the run directory if lock file exists.
-
     rm -f -- "$RUNDIR/${service##*/}/pid" "${RUNDIR}/${service##*/}/syspid"
 
     [ -e "$RUNDIR/${service##*/}/lock" ] && return
@@ -74,7 +72,6 @@ cleanup() {
 }
 
 term() {
-
     # This function is executed when the sysmgr receives an interrupt or a
     # hangup signal. It enters the termination state where it forwards SIGTERM
     # to every other runsyssv process that have their process ids in the RUNDIR.
